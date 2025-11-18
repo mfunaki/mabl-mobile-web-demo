@@ -1,41 +1,31 @@
 <!DOCTYPE html>
-<html lang="ja" class="h-full bg-gray-100">
+<html lang="ja" class="h-full">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>mablデモアプリ</title>
-    <!-- Tailwind CSSを読み込み -->
+    <!-- Tailwind CSSを読み込み (URLを https://cdn.tailwindcss.com に修正) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* モバイルデバイスの画面サイズをシミュレート（PCでの閲覧用） */
-        /* スマートフォンで見る場合はこの設定は不要ですが、PCでのデモ用に残します */
-        @media (min-width: 640px) {
-            body {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                min-height: 100vh;
-                background-color: #f0f2f5;
-            }
+        /* bodyのマージンを強制的にリセット（Tailwindの読み込み失敗対策） */
+        body {
+            margin: 0;
         }
+
+        /* PCでの閲覧用シミュレーション（中央配置スタイル）を削除 */
+
         /* メインのコンテナ */
         .mobile-container {
             width: 100%;
-            max-width: 400px; /* スマートフォンの幅に制限 */
-            height: 100vh; /* フルハイト */
-            border: 1px solid #ccc; /* 境界線 */
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
+            /* max-width, border, box-shadow, border-radius を削除 */
+            height: 100%; /* 100vhから100%に変更 (html, body が h-full のため) */
             overflow: hidden; /* スクロールを内部で管理 */
             display: flex;
             flex-direction: column;
             background-color: #ffffff;
         }
-        @media (min-width: 640px) {
-            .mobile-container {
-                height: 800px; /* PCでは高さを固定 */
-            }
-        }
+        /* PC閲覧用の固定高さ指定 (@media) を削除 */
+
         /* ヘッダー */
         .header {
             flex-shrink: 0;
@@ -85,8 +75,8 @@
         }
     </style>
 </head>
-<body class="h-full">
-
+<body class="h-full m-0 bg-white"> <!-- ← bodyタグに m-0 クラスを追加 -->
+    
     <div class="mobile-container">
 
         <!-- ===== 画面1: ログイン画面 ===== -->
