@@ -1,0 +1,13 @@
+# OS固有のファイル
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE設定ファイル
+.idea/
+.vscode/
+
+# Docker関連ファイル
+docker-compose.override.yml
+*.log
+.dockerignore
