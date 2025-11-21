@@ -73,6 +73,28 @@
         .screen.active {
             display: flex; /* アクティブな画面のみ表示 */
         }
+
+        /* プロフィール画像用スタイル */
+        .profile-image {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid white;
+        }
+        .profile-image-large {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #4a90e2;
+        }
+        .upload-preview {
+            display: none;
+        }
+        .upload-preview.active {
+            display: block;
+        }
     </style>
 </head>
 <body class="h-full m-0 bg-white"> <!-- ← bodyタグに m-0 クラスを追加 -->
@@ -123,7 +145,10 @@
         <!-- ===== 画面2: ホーム画面 ===== -->
         <div id="home-screen" class="screen">
             <div class="header flex items-center justify-between px-4">
-                <div class="w-10"></div> <!-- スペーサー -->
+                <!-- プロフィール画像アイコン (アップロード機能追加後に表示) -->
+                <div id="profile-icon-container" class="w-10">
+                    <img id="profile-icon" src="https://placehold.co/40x40/CCCCCC/666666?text=U" alt="プロフィール" class="profile-image">
+                </div>
                 <h1 class="text-xl font-semibold text-white">ホーム</h1>
                 <!-- カートアイコン (Visual Find用) -->
                 <button aria-label="カート" class="text-white p-2 rounded-full hover:bg-blue-700">
@@ -187,6 +212,36 @@
             <div class="content space-y-6">
                 <h2 class="text-xl font-bold text-gray-800">アプリケーション設定</h2>
 
+                <!-- プロフィール画像アップロードセクション (新規追加) -->
+                <div class="rounded-lg border border-blue-300 bg-blue-50 p-4">
+                    <h3 class="font-semibold text-blue-800">プロフィール画像</h3>
+                    <div class="mt-4 flex flex-col items-center space-y-4">
+                        <!-- 現在の画像プレビュー -->
+                        <div class="text-center">
+                            <img id="profile-preview" src="https://placehold.co/120x120/CCCCCC/666666?text=No+Image" alt="プロフィールプレビュー" class="profile-image-large mx-auto">
+                            <p id="upload-status" class="mt-2 text-sm text-gray-600 h-4"></p>
+                        </div>
+                        
+                        <!-- ファイル選択ボタン -->
+                        <div class="w-full">
+                            <label for="profile-upload" class="flex w-full justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-blue-500 cursor-pointer">
+                                画像を選択
+                            </label>
+                            <input id="profile-upload" type="file" accept="image/jpeg,image/png,image/gif" class="hidden">
+                        </div>
+
+                        <!-- アップロードされたファイル情報 -->
+                        <div id="file-info" class="upload-preview w-full text-sm text-gray-700 bg-white p-3 rounded border border-gray-200">
+                            <p><strong>ファイル名:</strong> <span id="file-name"></span></p>
+                            <p><strong>サイズ:</strong> <span id="file-size"></span></p>
+                            <p><strong>種類:</strong> <span id="file-type"></span></p>
+                        </div>
+
+                        <!-- エラーメッセージ -->
+                        <div id="upload-error" class="upload-preview w-full text-sm text-red-600 bg-red-50 p-3 rounded border border-red-200"></div>
+                    </div>
+                </div>
+
                 <!-- 自動修復デモ用 -->
                 <div class="rounded-lg border border-yellow-300 bg-yellow-50 p-4">
                     <h3 class="font-semibold text-yellow-800">自動修復(Auto-heal)デモ</h3>
@@ -228,8 +283,18 @@
         const welcomeMessage = document.getElementById('welcome-message');
         const changeIdButton = document.getElementById('change-id-button');
         const changeIdStatus = document.getElementById('change-id-status');
+        const profileUpload = document.getElementById('profile-upload');
+        const profilePreview = document.getElementById('profile-preview');
+        const profileIcon = document.getElementById('profile-icon');
+        const fileInfo = document.getElementById('file-info');
+        const fileName = document.getElementById('file-name');
+        const fileSize = document.getElementById('file-size');
+        const fileType = document.getElementById('file-type');
+        const uploadStatus = document.getElementById('upload-status');
+        const uploadError = document.getElementById('upload-error');
 
         let originalLoginButtonId = 'login-button';
+        let currentProfileImage = null;
 
         // --- 関数定義 ---
 
@@ -276,10 +341,87 @@
         }
 
         /**
+         * プロフィール画像のアップロード処理
+         */
+        function handleProfileUpload(event) {
+            const file = event.target.files[0];
+            
+            // ファイルが選択されていない場合
+            if (!file) {
+                return;
+            }
+
+            // エラーメッセージをクリア
+            uploadError.classList.remove('active');
+            uploadError.textContent = '';
+
+            // ファイルサイズチェック (5MB以下)
+            const maxSize = 5 * 1024 * 1024;
+            if (file.size > maxSize) {
+                uploadError.textContent = 'ファイルサイズが大きすぎます。5MB以下のファイルを選択してください。';
+                uploadError.classList.add('active');
+                fileInfo.classList.remove('active');
+                return;
+            }
+
+            // ファイル形式チェック
+            const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+            if (!allowedTypes.includes(file.type)) {
+                uploadError.textContent = '対応していないファイル形式です。JPEG、PNG、またはGIF形式の画像を選択してください。';
+                uploadError.classList.add('active');
+                fileInfo.classList.remove('active');
+                return;
+            }
+
+            // ファイル情報を表示
+            fileName.textContent = file.name;
+            fileSize.textContent = formatFileSize(file.size);
+            fileType.textContent = file.type;
+            fileInfo.classList.add('active');
+
+            // 画像プレビューを表示
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                currentProfileImage = e.target.result;
+                profilePreview.src = currentProfileImage;
+                profileIcon.src = currentProfileImage;
+                uploadStatus.textContent = 'アップロード完了';
+                uploadStatus.classList.add('text-green-600');
+                
+                // 3秒後にステータスメッセージをクリア
+                setTimeout(() => {
+                    uploadStatus.textContent = '';
+                    uploadStatus.classList.remove('text-green-600');
+                }, 3000);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        /**
+         * ファイルサイズを読みやすい形式に変換
+         */
+        function formatFileSize(bytes) {
+            if (bytes < 1024) {
+                return bytes + ' B';
+            } else if (bytes < 1024 * 1024) {
+                return (bytes / 1024).toFixed(2) + ' KB';
+            } else {
+                return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+            }
+        }
+
+        /**
          * ログアウト処理
          */
         function handleLogout() {
             welcomeMessage.textContent = '';
+            // プロフィール画像をリセット
+            currentProfileImage = null;
+            profilePreview.src = 'https://placehold.co/120x120/CCCCCC/666666?text=No+Image';
+            profileIcon.src = 'https://placehold.co/40x40/CCCCCC/666666?text=U';
+            fileInfo.classList.remove('active');
+            uploadStatus.textContent = '';
+            profileUpload.value = '';
             showScreen('login-screen');
         }
 
@@ -322,6 +464,9 @@
                 showScreen(targetScreen);
             });
         });
+
+        // プロフィール画像アップロード
+        profileUpload.addEventListener('change', handleProfileUpload);
 
         // 初期表示
         showScreen('login-screen');
