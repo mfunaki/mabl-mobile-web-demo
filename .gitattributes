@@ -1,0 +1,128 @@
+# デフォルトの挙動 (Gitに判断させる)
+* text=auto
+
+# ---------------------------------------------------
+# Linux/Docker/CI で実行・解析されるファイルは
+# Windows上でも強制的に LF (eol=lf) にする
+# ---------------------------------------------------
+
+# シェルスクリプト (最重要)
+*.sh        text eol=lf
+*.bash      text eol=lf
+*.zsh       text eol=lf
+
+# Docker関連
+Dockerfile  text eol=lf
+Containerfile text eol=lf
+.dockerignore text eol=lf
+
+# YAMLファイル (Docker Compose, k8s, CI/CD, configs)
+*.yml       text eol=lf
+*.yaml      text eol=lf
+
+# ---------------------------------------------------
+# Web開発関連
+# ---------------------------------------------------
+*.html      text eol=lf
+*.css       text eol=lf
+*.scss      text eol=lf
+*.sass      text eol=lf
+*.less      text eol=lf
+*.svg       text eol=lf
+*.xml       text eol=lf
+
+# JavaScript/TypeScript
+*.js        text eol=lf
+*.jsx       text eol=lf
+*.ts        text eol=lf
+*.tsx       text eol=lf
+*.mjs       text eol=lf
+*.cjs       text eol=lf
+*.vue       text eol=lf
+
+# ---------------------------------------------------
+# モバイル開発関連
+# ---------------------------------------------------
+# Android
+*.gradle    text eol=lf
+*.properties text eol=lf
+*.pro       text eol=lf
+gradlew     text eol=lf
+
+# iOS/Flutter
+*.pbxproj   text eol=lf
+*.xcconfig  text eol=lf
+Podfile     text eol=lf
+*.podspec   text eol=lf
+
+# Dart/Flutter
+*.dart      text eol=lf
+pubspec.yaml text eol=lf
+pubspec.lock text eol=lf
+
+# ---------------------------------------------------
+# その他のプログラミング言語・スクリプト
+# ---------------------------------------------------
+*.py        text eol=lf
+*.rb        text eol=lf
+*.php       text eol=lf
+*.go        text eol=lf
+*.java      text eol=lf
+*.kt        text eol=lf
+*.kts       text eol=lf
+*.scala     text eol=lf
+
+# ---------------------------------------------------
+# 設定ファイル・データファイル
+# ---------------------------------------------------
+*.json      text eol=lf
+*.toml      text eol=lf
+*.ini       text eol=lf
+*.conf      text eol=lf
+*.config    text eol=lf
+*.lock      text eol=lf
+*.env       text eol=lf
+.env.*      text eol=lf
+.editorconfig text eol=lf
+.gitignore  text eol=lf
+.gitattributes text eol=lf
+
+# ドキュメント
+*.md        text eol=lf
+*.txt       text eol=lf
+*.rst       text eol=lf
+*.adoc      text eol=lf
+LICENSE     text eol=lf
+README      text eol=lf
+
+# ---------------------------------------------------
+# バイナリファイル (念のため明示)
+# ---------------------------------------------------
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.jar binary
+*.aar binary
+*.so binary
+*.dylib binary
+*.dll binary
+*.exe binary
+*.zip binary
+*.tar binary
+*.gz binary
+*.7z binary
+*.apk binary
+*.ipa binary
+*.app binary
+*.ttf binary
+*.otf binary
+*.woff binary
+*.woff2 binary
+*.eot binary
+*.mov binary
+*.mp4 binary
+*.mp3 binary
+*.wav binary
