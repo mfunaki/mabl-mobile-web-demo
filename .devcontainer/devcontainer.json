@@ -1,0 +1,59 @@
+{
+  "name": "MABL Mobile Web Demo",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspace",
+
+  // 起動後に実行するコマンド（npmがインストール済みの状態で実行）
+  "postCreateCommand": "npm install -g http-server serve && (npm install || true)",
+  
+  // VSCode拡張機能
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        // Web開発
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "ritwickdey.liveserver",
+        
+        // Docker
+        "ms-azuretools.vscode-docker",
+        
+        // Git
+        "eamodio.gitlens",
+        
+        // その他便利ツール
+        "editorconfig.editorconfig"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "files.eol": "\n",
+        "liveServer.settings.port": 8080
+      }
+    }
+  },
+
+  // ポートフォワーディング
+  "forwardPorts": [80, 8080, 3000],
+  
+  // コンテナ作成後のユーザー
+  "remoteUser": "vscode",
+  
+  // 機能追加
+  "features": {
+    "ghcr.io/devcontainers/features/git:1": {},
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "20"
+    },
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "installZsh": true,
+      "installOhMyZsh": true,
+      "username": "vscode",
+      "userUid": "1000",
+      "userGid": "1000"
+    }
+  }
+}
